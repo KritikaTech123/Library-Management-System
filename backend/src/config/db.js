@@ -45,6 +45,13 @@ const memoryStore = {
 
 // Attempt MySQL connection on startup
 export const initializeDatabase = async () => {
+  if (process.env.NETLIFY === 'true' || process.env.NETLIFY_FUNCTIONS === 'true') {
+    console.info('[Database] Using the integrated in-memory data store in the Netlify function.');
+    isUsingMySQL = false;
+    pool = null;
+    return;
+  }
+
   try {
     const config = {
       host: process.env.DB_HOST || 'localhost',
