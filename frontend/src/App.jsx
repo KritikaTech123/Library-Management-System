@@ -10,10 +10,10 @@ import { Reports } from './components/Reports/Reports';
 import { AuthModal } from './components/Auth/AuthModal';
 import { NotificationsModal } from './components/NotificationsModal';
 import { booksAPI, studentsAPI, transactionsAPI, reportsAPI } from './api/api';
-import { CheckCircle2, AlertCircle, Info, Sparkles } from 'lucide-react';
+import { CheckCircle2, AlertCircle, Sparkles } from 'lucide-react';
 
 function LibraryApp() {
-  const { user, isLoginModalOpen, setIsLoginModalOpen } = useAuth();
+  const { isLoginModalOpen, setIsLoginModalOpen } = useAuth();
 
   const [activeTab, setActiveTab] = useState('dashboard');
   const [searchQuery, setSearchQuery] = useState('');
@@ -26,7 +26,12 @@ function LibraryApp() {
 
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
   const [toast, setToast] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [, setLoading] = useState(true);
+  const [darkMode, setDarkMode] = useState(() => localStorage.getItem('campus_library_theme') === 'dark');
+
+  useEffect(() => {
+    localStorage.setItem('campus_library_theme', darkMode ? 'dark' : 'light');
+  }, [darkMode]);
 
   // Show auto-dismissing toast notifications
   const showToast = (type, message) => {
@@ -77,6 +82,11 @@ function LibraryApp() {
 
   // When user clicks "Request Book" or "Issue This Book"
   const handleQuickIssue = (book) => {
+    if (!book) {
+      setActiveTab('catalog');
+      showToast('info', 'Add a book to the catalog before starting an issue.');
+      return;
+    }
     setPreselectedBook(book);
     setActiveTab('issue-book');
     showToast('info', `Selected "${book.title}" for issue transaction.`);
@@ -166,7 +176,7 @@ function LibraryApp() {
   const overdueCount = overdueList.length || stats?.overdueBooks || 4;
 
   return (
-    <div className="min-h-screen bg-[#F8F9FA] text-slate-800 relative selection:bg-[#C5A25A]/30 selection:text-[#0F3D3E]">
+    <div className={`app-shell ${darkMode ? 'theme-dark' : ''}`}>
       {/* Background Graphic Lines and Dot Grids matching reference screenshots */}
       <GeometricDecorations />
 
@@ -176,6 +186,8 @@ function LibraryApp() {
         setActiveTab={setActiveTab}
         overdueCount={overdueCount}
         onOpenNotifications={() => setIsNotificationsOpen(true)}
+        darkMode={darkMode}
+        setDarkMode={setDarkMode}
       />
 
       {/* Toast Feedback Notification Banner */}
@@ -203,7 +215,7 @@ function LibraryApp() {
       )}
 
       {/* Main Content Area */}
-      <main className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+      <main className="app-content">
         {/* Module 1: Dashboard (Matches Screenshot 2) */}
         {activeTab === 'dashboard' && (
           <Dashboard
@@ -213,6 +225,7 @@ function LibraryApp() {
             setSearchQuery={setSearchQuery}
             onSearchSubmit={handleSearchSubmit}
             onSelectBook={handleQuickIssue}
+            onOpenNotifications={() => setIsNotificationsOpen(true)}
           />
         )}
 
