@@ -2,7 +2,7 @@
 
 ## Live Demo
 
-[Open Campus Library Management System](https://preeminent-dragon-4eb6a9.netlify.app/)
+[Open Campus Library Management System](https://6ae920dbbfec4cc6f512d25d--preeminent-dragon-4eb6a9.netlify.app/)
 
 A modern, responsive, full-stack web-based Library Management System built with **React.js**, **Tailwind CSS**, **Node.js (Express)**, and **MySQL** (with automated academic seed-store fallback).
 
